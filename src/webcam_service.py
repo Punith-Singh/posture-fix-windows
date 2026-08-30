@@ -111,7 +111,7 @@ class WebcamService:
         self._set_status("Camera active — tracking head")
 
         last_process_time = 0
-        process_interval = 1.0 / 15.0  # Process at 15 FPS to save CPU
+        process_interval = 1.0 / 30.0  # Process at 30 FPS for immediate response
 
         try:
             while self._running:

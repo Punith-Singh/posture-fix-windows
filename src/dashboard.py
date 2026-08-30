@@ -30,6 +30,12 @@ from .app_state import AppState
 from .posture_analyzer import PostureState
 from .alert_manager import AlertManager
 
+# Theme management
+from .theme import apply_theme, DARK_THEME, LIGHT_THEME
+
+# Chart interactivity
+import mplcursors
+
 
 # ── Colors ────────────────────────────────────────────────────
 COLOR_BG = "#1e1e2e"
@@ -59,6 +65,9 @@ class PostureFixDashboard:
         self.root.minsize(380, 700)
         self.root.configure(bg=COLOR_BG)
         self.root.protocol("WM_DELETE_WINDOW", self._hide_to_tray)
+        # Apply initial theme
+        self.current_theme = DARK_THEME
+        apply_theme(self.root, self.current_theme)
 
         # Apply dark theme
         style = ttk.Style(self.root)
@@ -103,8 +112,12 @@ class PostureFixDashboard:
 
         # Status dot
         self._status_dot = tk.Canvas(header_inner, width=14, height=14, bg=COLOR_ACCENT, highlightthickness=0)
-        self._status_dot.pack(side="left", padx=(0, 8))
         self._dot_id = self._status_dot.create_oval(2, 2, 12, 12, fill="gray", outline="")
+        self._status_dot.pack(side="left", padx=(0, 8))
+        
+        # Theme toggle button
+        self._theme_btn = tk.Button(header_inner, text="Light", font=("Segoe UI", 9), bg=COLOR_ACCENT, fg="white", relief="flat", command=self._toggle_theme, cursor="hand2")
+        self._theme_btn.pack(side="right", padx=(0, 8))
 
         tk.Label(header_inner, text="PostureFix", font=("Segoe UI", 14, "bold"), bg=COLOR_ACCENT, fg="white").pack(side="left")
 
@@ -416,6 +429,7 @@ class PostureFixDashboard:
             line_color = COLOR_RED if self.state.posture_state == PostureState.BAD else COLOR_GREEN
             ax.fill_between(times, drops, alpha=0.15, color=line_color)
             ax.plot(times, drops, color=line_color, linewidth=1.5)
+            mplcursors.cursor(ax, hover=True).connect("add", lambda sel: sel.annotation.set_text(f"{sel.target[1]:.1f}°"))
             ax.axhline(y=threshold, color=COLOR_RED, linestyle="--", linewidth=1, alpha=0.6)
             ax.set_xlim(t_min, max(t_max, t_min + 10))
             ax.set_ylim(0, max(max(drops) * 1.2, threshold * 1.5, 5))
@@ -501,10 +515,22 @@ class PostureFixDashboard:
     def _hide_to_tray(self):
         self.root.withdraw()
 
-    def _show_from_tray(self, icon=None, item=None):
+    def _show_from_tray(self):
         self.root.deiconify()
-        self.root.lift()
-        self.root.focus_force()
+
+    def _toggle_theme(self):
+        """Toggle between dark and light themes and update UI elements."""
+        if self.current_theme == DARK_THEME:
+            self.current_theme = LIGHT_THEME
+            self._theme_btn.config(text="Dark")
+        else:
+            self.current_theme = DARK_THEME
+            self._theme_btn.config(text="Light")
+        apply_theme(self.root, self.current_theme)
+        # Force redraw of charts to apply new background colors
+        self._update_live_chart()
+        self._update_history_chart()
+
 
     # ══════════════════════════════════════════════════════════
     # ██  SYSTEM TRAY

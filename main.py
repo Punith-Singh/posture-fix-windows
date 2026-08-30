@@ -7,6 +7,17 @@ Uses your webcam + MediaPipe Face Mesh to detect head pose in real-time.
 import sys
 import os
 import logging
+import ctypes
+
+# Fix for blurry text on High-DPI displays (Windows)
+if sys.platform == "win32":
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    except Exception:
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except Exception:
+            pass
 
 # Setup logging to file
 log_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "posturefix.log")

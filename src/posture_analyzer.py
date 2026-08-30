@@ -24,7 +24,7 @@ class PostureAnalyzer:
         self.hold_seconds: float = 3.0
         self.recover_seconds: float = 1.5
         self.invert: bool = False
-        self.alpha: float = 0.2  # Low-pass filter smoothing factor
+        self.alpha: float = 0.6  # Increased for much faster response
 
         # Internal state
         self._smoothed: float | None = None
