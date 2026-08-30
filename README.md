@@ -1,27 +1,32 @@
-# PostureFix for Windows
+# React + TypeScript + Vite
 
-A real-time posture correction tool for Windows that uses your webcam and AI (MediaPipe Face Landmarker) to detect when you slouch and alert you to sit up straight.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-Inspired by the original macOS PostureFix app, but completely rebuilt for Windows without requiring specialized hardware like AirPods.
+Currently, two official plugins are available:
 
-## Features
-- **Real-time AI Head Tracking:** Uses MediaPipe Tasks API to accurately track your 3D head pose via any standard webcam.
-- **Smart Filtering:** Uses an IIR low-pass filter to smooth out sudden movements and prevent false alarms.
-- **Multi-channel Alerts:** Configurable sound effects, voice TTS ("Sit up straight"), and Windows toast notifications.
-- **Live Dashboard:** Dark-themed UI with real-time pitch display, progress bars, and a 60-second live chart.
-- **Session Stats & History:** Tracks good posture percentage and saves a 7-day history chart.
-- **Privacy First:** All AI processing happens completely locally on your machine. No images are ever saved or sent anywhere.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Installation
-1. Clone this repository.
-2. Ensure you have Python 3.10+ installed.
-3. Create a virtual environment and install the requirements:
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+## React Compiler
 
-## Usage
-Double-click `run.bat` to launch the app.
-Click **Start Monitoring**, sit up straight, and click **Calibrate**. The app will now run in the background (or system tray) and nudge you if you slouch!
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
+```
+
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
